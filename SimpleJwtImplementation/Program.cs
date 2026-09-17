@@ -10,15 +10,20 @@
 
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SimpleJwtImplementation.Infrastructrure;
 using SimpleJwtImplementation.Models;
+using SimpleJwtImplementation.Workers;
 using System.Text;
-using static System.Net.WebRequestMethods;
+
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddConfiguration();
+
+builder.Services.AddHostedService<Worker>();
+
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -38,10 +43,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = "https://localhost:7079",
             ValidAudience = "https://localhost:7079",
+            ClockSkew = TimeSpan.FromMinutes(0),
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes("MaSuperCléPrivéeDeLaMortQuiTueOuPas!!!"))
         };
     });
