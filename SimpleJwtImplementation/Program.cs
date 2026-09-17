@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Serilog;
 using SimpleJwtImplementation.Infrastructrure;
 using SimpleJwtImplementation.Models;
 using SimpleJwtImplementation.Workers;
@@ -20,7 +21,10 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddConfiguration();
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
 
 builder.Services.AddHostedService<Worker>();
 
